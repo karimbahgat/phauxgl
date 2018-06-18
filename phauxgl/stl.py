@@ -111,12 +111,16 @@ def LoadSTL(path):
 
 def loadSTLA(file):
     #print 'STLA'
+    normals = []
     vertexes = []
     for line in file:
         fields = line.split()
         if len(fields) == 4 and fields[0] == "vertex":
             f = ParseFloats(fields[1:])
             vertexes.append(Vector(*f[0:3])) #f[0], f[1], f[2]))
+        elif len(fields) == 5 and fields[1] == "normal":
+            n = ParseFloats(fields[2:])
+            normals.append(n)
             
     triangles = [] #Triangles()
     for i in range(0, len(vertexes), 3):
@@ -124,7 +128,9 @@ def loadSTLA(file):
         t.V1.Position = vertexes[i+0]
         t.V2.Position = vertexes[i+1]
         t.V3.Position = vertexes[i+2]
-        t.FixNormals()
+        t.V1.Normal = normals[i+0]
+        t.V2.Normal = normals[i+1]
+        t.V3.Normal = normals[i+2]
         triangles.append(t)
     return NewTriangleMesh(triangles)
 
@@ -142,7 +148,7 @@ def loadSTLB(file):
     #arr.fromfile(file, count*3*3)
 
     b = r.read(count*50)
-    flat = unpack('<' + '12x9f2x'*count, b)
+    flat = unpack('<' + '12f2x'*count, b)
     print len(b),count,len(flat)
 
     # multiprocessing approach
@@ -258,15 +264,16 @@ def loadSTLB(file):
     _min = Vector()
     _max = Vector()
     triangles = [] #Triangles()
-    for i in range(0, len(flat), 9):
-        v1 = Vector(*flat[i:i+3]) #flat[i], flat[i+1], flat[i+2])
-        v2 = Vector(*flat[i+3:i+6]) #flat[i+3], flat[i+4], flat[i+5])
-        v3 = Vector(*flat[i+6:i+9]) #flat[i+6], flat[i+7], flat[i+8])
+    for i in range(0, len(flat), 12):
+        n = Vector(*flat[i:i+3]) #flat[i], flat[i+1], flat[i+2])
+        v1 = Vector(*flat[i+3:i+6]) #flat[i+3], flat[i+4], flat[i+5])
+        v2 = Vector(*flat[i+6:i+9]) #flat[i+6], flat[i+7], flat[i+8])
+        v3 = Vector(*flat[i+9:i+12])
         t = Triangle()
         t.V1.Position = v1
         t.V2.Position = v2
         t.V3.Position = v3
-        n = t.Normal()
+        #n = t.Normal()
         t.V1.Normal = n
         t.V2.Normal = n
         t.V3.Normal = n
