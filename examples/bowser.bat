@@ -1,0 +1,1 @@
+python bowser.py & pause
