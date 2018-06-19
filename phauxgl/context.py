@@ -338,7 +338,7 @@ class Context:
                     # TODO: clipping roundoff error; fix
                     # TODO: could also be from fat lines going off screen
                     continue
-                info.TotalPixels += 1
+                #info.TotalPixels += 1
                 z = b0*s0.Z + b1*s1.Z + b2*s2.Z
                 bz = z + dc.DepthBias
                 if dc.ReadDepth and bz > dc.DepthBuffer[i]: # safe w/out lock?
@@ -374,9 +374,12 @@ class Context:
                             db = int(db*a/255.0 + sb)
                             da = int(da*a/255.0 + sa)
                             dc.ColorBuffer[x, y] = (dr,dg,db,da)
-                            #print (dr,dg,db,da), dc.ColorBuffer.pixels[x, y]
+##                            with dc.ColorBuffer.data.get_lock():
+##                                dc.ColorBuffer[x, y] = (dr,dg,db,da)
                         else:
                             dc.ColorBuffer[x, y] = color.NRGBA()
+##                            with dc.ColorBuffer.data.get_lock():
+##                                dc.ColorBuffer[x, y] = color.NRGBA()
                 #lock.Unlock()
             w00 += b12
             w01 += b20

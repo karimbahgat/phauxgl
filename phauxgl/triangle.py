@@ -23,8 +23,7 @@ def NewTriangleForPoints(p1, p2, p3):
 
 class Vertexes:
     def __init__(self):
-        self._xyz_set = set()
-        self._xyz = list()
+        self._xyz_lookup = dict()
         
 ##        self._xs = array.array('f')
 ##        self._ys = array.array('f')
@@ -51,16 +50,16 @@ class Vertexes:
 ##        self._o4 = array.array('f')
 
     def __len__(self):
-        return len(self._xyz)
+        return len(self._xyz_lookup)
         
     def __iter__(self):
 ##        for i in range(len(self)):
 ##            yield self[i]
-        step = 6+8
-        for xyz,di in zip(self._xyz, range(0, len(self), 6+8)):
+        step = 9+8
+        for di in range(0, len(self), step):
             print di
-            n1,n2,n3, t1,t2,t3, c1,c2,c3,c4, o1,o2,o3,o4 = self._data[di:di+step]
-            pos = Vector(*xyz)
+            p1,p2,p3, n1,n2,n3, t1,t2,t3, c1,c2,c3,c4, o1,o2,o3,o4 = self._data[di:di+step]
+            pos = Vector(p1,p2,p3)
             norm = Vector(n1,n2,n3)
             tex = Vector(t1,t2,t3)
             col = Color(c1,c2,c3,c4)
@@ -77,10 +76,10 @@ class Vertexes:
 ##        tex = Vector(self._t1[i],self._t2[i],self._t3[i])
 ##        col = Color(self._c1[i],self._c2[i],self._c3[i],self._c4[i])
 ##        out = VectorW(self._o1[i],self._o2[i],self._o3[i],self._o4[i])
-        pos = Vector(*self._xyz[i])
-        step = 6+8
+        step = 9+8
         di = i * step
-        n1,n2,n3, t1,t2,t3, c1,c2,c3,c4, o1,o2,o3,o4 = self._data[di:di+step]
+        p1,p2,p3, n1,n2,n3, t1,t2,t3, c1,c2,c3,c4, o1,o2,o3,o4 = self._data[di:di+step]
+        pos = Vector(p1,p2,p3)
         norm = Vector(n1,n2,n3)
         tex = Vector(t1,t2,t3)
         col = Color(c1,c2,c3,c4)
@@ -91,17 +90,16 @@ class Vertexes:
                       Color=col,
                       Output=out)
 
+    def flat(self):
+        return self._data
+
     def index(self, v):
         pos = (v.Position.X, v.Position.Y, v.Position.Z)
-        if pos in self._xyz_set:
-            return self._xyz.index(pos)
-        else:
-            return -1
+        return self._xyz_lookup.get(pos, -1)
 
     def append(self, v):
         pos = (v.Position.X, v.Position.Y, v.Position.Z)
-        self._xyz_set.add(pos)
-        self._xyz.append(pos)
+        self._xyz_lookup[pos] = len(self._xyz_lookup)
         
 ##        self._xs.append(v.Position.X)
 ##        self._ys.append(v.Position.Y)
@@ -125,7 +123,8 @@ class Vertexes:
 ##        self._o3.append(v.Output.Z)
 ##        self._o4.append(v.Output.W)
 
-        self._data.extend([v.Normal.X, v.Normal.Y, v.Normal.Z,
+        self._data.extend([v.Position.X, v.Position.Y, v.Position.Z,
+                           v.Normal.X, v.Normal.Y, v.Normal.Z,
                           v.Texture.X, v.Texture.Y, v.Texture.Z,
                           v.Color.R, v.Color.G, v.Color.B, v.Color.A,
                           v.Output.X, v.Output.Y, v.Output.Z, v.Output.W])
@@ -156,6 +155,9 @@ class Triangles:
         v2 = self._vertexes[i2]
         v3 = self._vertexes[i3]
         return Triangle(v1, v2, v3)
+
+    def flat_vertexes(self):
+        return self._vertexes.flat()
         
     def append(self, tri):
         vindexes = []

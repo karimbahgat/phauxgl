@@ -260,6 +260,61 @@ def loadSTLB(file):
 ##    zmaxs = [v.Z for v in maxs]
 ##    _max = Vector(max(xmaxs), max(ymaxs), max(zmaxs))
 
+
+    # experiments with faster data structures
+####    def itr():
+####        zeros = tuple([0.0 for _ in range(3+4+4)])
+####        for i in range(0, len(flat), 12):
+####            n = flat[i:i+3]
+####            v1 = flat[i+3:i+6] + n + zeros
+####            v2 = flat[i+6:i+9] + n + zeros
+####            v3 = flat[i+9:i+12] + n + zeros
+####            yield v1 + v2 + v3
+####
+####    import itertools
+####    init = itertools.chain(*itr())
+####    data = array.array('f', init)
+####    sfsd
+##
+##    data = array.array('f')
+##    zeros = tuple([0.0 for _ in range(3+4+4)])
+##    for i in range(0, len(flat), 12):
+##        n = flat[i:i+3]
+##        data.extend(flat[i+3:i+6] + n + zeros)
+##        data.extend(flat[i+6:i+9] + n + zeros)
+##        data.extend(flat[i+9:i+12] + n + zeros)
+##    print 'arrays built'
+##    for i in xrange(len(data)):
+##        data[i]
+##    print 'all array values read'
+##    for i in xrange(len(data)):
+##        data[i] = 3.3
+##    print 'all array values reassigned'
+##    for i in xrange(0, len(data), 9+8):
+##        vx1 = ((data[i:i+3]),(data[i+3:i+6]),(data[i+6:i+9]),
+##                     (data[i+9:i+12]),(data[i+12:i+15]))
+##        i += 9+8
+##        vx2 = ((data[i:i+3]),(data[i+3:i+6]),(data[i+6:i+9]),
+##                     (data[i+9:i+12]),(data[i+12:i+15]))
+##        i += 9+8
+##        vx3 = ((data[i:i+3]),(data[i+3:i+6]),(data[i+6:i+9]),
+##                     (data[i+9:i+12]),(data[i+12:i+15]))
+##        # NOTE: creating all the vector instances below is the main bottleneck
+##        # ...of storing data in array. But maybe can just read on-demand, and
+##        # ...maybe can reduce overhead of Vector creation, or maybe just drop
+##        # ...Vector class alltogether, as this is the smallest possible unit,
+##        # ...instead using tuples 3+ floats.
+####        vx1 = (Vector(data[i:i+3]),Vector(data[i+3:i+6]),Vector(data[i+6:i+9]),
+####                     Vector(data[i+9:i+12]),Vector(data[i+12:i+15]))
+####        i += 9+8
+####        vx2 = (Vector(data[i:i+3]),Vector(data[i+3:i+6]),Vector(data[i+6:i+9]),
+####                     Vector(data[i+9:i+12]),Vector(data[i+12:i+15]))
+####        i += 9+8
+####        vx3 = (Vector(data[i:i+3]),Vector(data[i+3:i+6]),Vector(data[i+6:i+9]),
+####                     Vector(data[i+9:i+12]),Vector(data[i+12:i+15]))
+##        Triangle(vx1,vx2,vx3)
+##    fdsfs
+
     # normal approach
     _min = Vector()
     _max = Vector()
