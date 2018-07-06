@@ -83,35 +83,43 @@ def pooled_draw_triangles(trindexes):
 ##        #info = dc.DrawTriangle(t)
 ##        #result = result.Add(info)
 
-    vectors = sharedData['vectors']
-    #print 'found shared vectors', repr(vectors)[:200]
-    step = 3+6+8
-    tris = []
-    #print ['NOW',len(trindexes),trindexes[0:len(trindexes):3]]
+##    vectors = sharedData['vectors']
+##    #print 'found shared vectors', repr(vectors)[:200]
+##    step = 3+6+8
+##    tris = []
+##    #print ['NOW',len(trindexes),trindexes[0:len(trindexes):3]]
+##    for ti in trindexes:
+##        vi = ti*3 # first vertex of triangle
+##        verts = []
+##        try:
+##            for vi in range(vi, vi+3):
+##                vci = vi*step
+##                #print ['hmm',len(vectors),vi,vci]
+##                p1,p2,p3, n1,n2,n3, t1,t2,t3, c1,c2,c3,c4, o1,o2,o3,o4 = vectors[vci:vci+step]
+##                pos = Vector(p1,p2,p3)
+##                norm = Vector(n1,n2,n3)
+##                tex = Vector(t1,t2,t3)
+##                col = Color(c1,c2,c3,c4)
+##                out = VectorW(o1,o2,o3,o4)
+##                v = Vertex(Position=pos,
+##                              Normal=norm,
+##                              Texture=tex,
+##                              Color=col,
+##                              Output=out)
+##                verts.append(v)
+##            tri = Triangle(*verts)
+##            dc.DrawTriangle(tri)
+##            tris.append(tri)
+##        except:
+##            # NEED TO FIX
+##            print '!!! skipped triangle'
+
+    tris = sharedData['triangles']
     for ti in trindexes:
-        vi = ti*3 # first vertex of triangle
-        verts = []
         try:
-            for vi in range(vi, vi+3):
-                vci = vi*step
-                #print ['hmm',len(vectors),vi,vci]
-                p1,p2,p3, n1,n2,n3, t1,t2,t3, c1,c2,c3,c4, o1,o2,o3,o4 = vectors[vci:vci+step]
-                pos = Vector(p1,p2,p3)
-                norm = Vector(n1,n2,n3)
-                tex = Vector(t1,t2,t3)
-                col = Color(c1,c2,c3,c4)
-                out = VectorW(o1,o2,o3,o4)
-                v = Vertex(Position=pos,
-                              Normal=norm,
-                              Texture=tex,
-                              Color=col,
-                              Output=out)
-                verts.append(v)
-            tri = Triangle(*verts)
+            tri = tris[ti]
             dc.DrawTriangle(tri)
-            tris.append(tri)
         except:
-            # NEED TO FIX
             print '!!! skipped triangle'
             
     print 'reconstructed',len(tris)
@@ -519,18 +527,22 @@ class Context:
 ##        print type(dcpickle['ColorBuffer']), repr(dcpickle['ColorBuffer'])[:100]
         #imarray = multiprocessing.Array('B', dcpickle['ColorBuffer']) # efficient sharable array of flattened 1-byte 255 color values
         #dcpickle['ColorBuffer'] = imarray
-        vectors = multiprocessing.sharedctypes.RawArray('f', [val for t in triangles for v in (t.V1,t.V2,t.V3) for val in [v.Position.X,v.Position.Y,v.Position.Z,
-                                                                                                                           v.Normal.X,v.Normal.Y,v.Normal.Z,
-                                                                                                                           v.Texture.X,v.Texture.Y,v.Texture.Z,
-                                                                                                                           v.Color.R,v.Color.G,v.Color.B,v.Color.A,
-                                                                                                                           v.Output.X,v.Output.Y,v.Output.Z,v.Output.W,
-                                                                                                                           ]] )
-        print 'flat',len(vectors)
+        
+##        vectors = multiprocessing.sharedctypes.RawArray('f', [val for t in triangles for v in (t.V1,t.V2,t.V3) for val in [v.Position.X,v.Position.Y,v.Position.Z,
+##                                                                                                                           v.Normal.X,v.Normal.Y,v.Normal.Z,
+##                                                                                                                           v.Texture.X,v.Texture.Y,v.Texture.Z,
+##                                                                                                                           v.Color.R,v.Color.G,v.Color.B,v.Color.A,
+##                                                                                                                           v.Output.X,v.Output.Y,v.Output.Z,v.Output.W,
+##                                                                                                                           ]] )
+##        print 'flat',len(vectors)
+        
+        triangles = multiprocessing.sharedctypes.RawArray(Triangle, triangles)
+        
 ##        for k,v in dcpickle.items():
 ##            print k,repr(v)[:100]
 ##        print dcpickle['Shader']
         #dcpickle.pop('DepthBuffer')
-        sharedData = dict(dc=dc, vectors=vectors) #,picklable=picklable)
+        sharedData = dict(dc=dc, triangles=triangles) #,picklable=picklable)
         pool = multiprocessing.Pool(cpus, initSharedData, (sharedData,) )
 ##        tasks = pool.map(pooled_draw_triangles, picklable, chunksize=chunksize)
 ##        print tasks

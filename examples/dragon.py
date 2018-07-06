@@ -14,14 +14,14 @@ from phauxgl.shader import NewPhongShader
 
 
 scale  = 1
-width  = 324
-height = 324
+width  = 1920/4
+height = 1920/4
 fovy   = 30
 near   = 1
 far    = 10
 
 
-eye    = V(3, 1, 0.5)
+eye    = V(-2, -4, 1)
 center = V(0, -0.1, 0)
 up     = V(0, 0, 1)
 
@@ -32,8 +32,8 @@ if __name__ == '__main__':
     #eye    = V(0, -5, 1.5)
     #mesh = LoadSTL("bunny.stl")
     #mesh = LoadSTL("boat.stl")
-    #mesh = LoadSTL("stanford_dragon.stl")
-    mesh = LoadSTL("bowser.stl")
+    mesh = LoadSTL("stanford_dragon.stl")
+    #mesh = LoadSTL("bowser.stl")
 
     # fit mesh in a bi-unit cube centered at the origin
     print 'prepping mesh...'
@@ -53,7 +53,7 @@ if __name__ == '__main__':
     print 'setting up matrix...'
     aspect = float(width) / float(height)
     matrix = LookAt(eye, center, up).Perspective(fovy, aspect, near, far)
-    light = V(0.75, 0.25, 1).Normalize()
+    light = V(-0.7, -0.7, 0.2)
 
     # render
     print 'setting up shader...'
@@ -76,5 +76,5 @@ if __name__ == '__main__':
     if scale != 1:
         # supersampling
         image = image.resize((width, height)) #, PIL.Image.BILINEAR)
-    image.save("bowser.png")
+    image.save("dragon.png")
     

@@ -3,6 +3,8 @@ from __future__ import division
 
 import math
 
+from ctypes import Structure, c_float
+
 from .util import Clamp
 
 def MakeColor(c):
@@ -38,7 +40,11 @@ def MakeColor(c):
 ##}
 
 
-class Color:
+class Color(Structure):
+    _fields_ = [('R',c_float),
+                ('G',c_float),
+                ('B',c_float),
+                ('A',c_float)]
     def __init__(self, r=0, g=0, b=0, a=0):
         self.R = r
         self.G = g

@@ -6,6 +6,8 @@ from .vector import Vector,VectorW
 from .color import Color
 from .box import Box
 
+from ctypes import Structure
+
 import array
 
 
@@ -191,11 +193,14 @@ class Triangles:
             self.append(tri)
 
 
-class Triangle:
-    def __init__(self, v1=None, v2=None, v3=None):
-        self.V1 = v1 or Vertex()
-        self.V2 = v2 or Vertex()
-        self.V3 = v3 or Vertex()
+class Triangle(Structure):
+    _fields_ = [('V1',Vertex),
+                ('V2',Vertex),
+                ('V3',Vertex)]
+##    def __init__(self, v1=None, v2=None, v3=None):
+##        self.V1 = v1 or Vertex()
+##        self.V2 = v2 or Vertex()
+##        self.V3 = v3 or Vertex()
 
     def __repr__(self):
         return 'Triangle( \n {} \n {} \n {} )'.format(self.V1, self.V2, self.V3)

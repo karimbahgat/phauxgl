@@ -315,6 +315,174 @@ def loadSTLB(file):
 ##        Triangle(vx1,vx2,vx3)
 ##    fdsfs
 
+    # struct approach
+##    from ctypes import Structure,c_float
+##    class Vector(Structure):
+##        _fields_ = [('X',c_float),
+##                    ('Y',c_float),
+##                    ('Z',c_float)]
+##    class VectorW(Structure):
+##        _fields_ = [('X',c_float),
+##                    ('Y',c_float),
+##                    ('Z',c_float),
+##                    ('W',c_float)]
+##    class Vertex(Structure):
+##        _fields_ = [('Position',Vector),
+##                    ('Normal',Vector),
+##                    ('Texture',Vector),
+##                    ('Color',VectorW),
+##                    ('Output',VectorW)]
+##    class Triangle(Structure):
+##        _fields_ = [('V1',Vertex),
+##                    ('V2',Vertex),
+##                    ('V3',Vertex)]
+##    _min = Vector()
+##    _max = Vector()
+##    from multiprocessing import Array
+##    triangles = Array(Triangle, count) #[] #Triangles()
+##    for i in range(0, len(flat), 12):
+##        n = Vector(*flat[i:i+3]) #flat[i], flat[i+1], flat[i+2])
+##        v1 = Vector(*flat[i+3:i+6]) #flat[i+3], flat[i+4], flat[i+5])
+##        v2 = Vector(*flat[i+6:i+9]) #flat[i+6], flat[i+7], flat[i+8])
+##        v3 = Vector(*flat[i+9:i+12])
+##        t = Triangle()
+##        t.V1.Position = v1
+##        t.V2.Position = v2
+##        t.V3.Position = v3
+##        #n = t.Normal()
+##        t.V1.Normal = n
+##        t.V2.Normal = n
+##        t.V3.Normal = n
+##        triangles[i//12] = t
+##
+##        xmin = min(v1.X, v2.X, v3.X)
+##        xmax = max(v1.X, v2.X, v3.X)
+##        ymin = min(v1.Y, v2.Y, v3.Y)
+##        ymax = max(v1.Y, v2.Y, v3.Y)
+##        zmin = min(v1.Z, v2.Z, v3.Z)
+##        zmax = max(v1.Z, v2.Z, v3.Z)
+##
+##        if i == 0:
+##            _min.X = xmin
+##            _min.Y = ymin
+##            _min.Z = zmin
+##            _max.X = xmax
+##            _max.Y = ymax
+##            _max.Z = zmax
+##        else:
+##            _min.X = min(_min.X, xmin)
+##            _min.Y = min(_min.Y, ymin)
+##            _min.Z = min(_min.Z, zmin)
+##            _max.X = max(_max.X, xmax)
+##            _max.Y = max(_max.Y, ymax)
+##            _max.Z = max(_max.Z, zmax)
+
+    # triangles approach
+##    import array
+##    _min = Vector()
+##    _max = Vector()
+##    
+##    class Triangles:
+##        def __init__(self):
+##            self.points = array.array('f')
+##            self.points_lookup = dict()
+##            self.faces = array.array('I')
+##            self.extra = array.array('f')
+##            
+##        def append(self, p1, p2, p3):
+##            indexes = []
+##            for p in (p1,p2,p3):
+##                i = self.points_lookup.get(p, -1)
+##                if i < 0:
+##                    self.points.extend(p)
+##                    i = len(self.points_lookup)
+##                    self.points_lookup[p] = i
+##                indexes.append(i)
+##            self.faces.extend(indexes)
+##            zeros = array.array('f', [0]*(3+3+4+4))
+##            self.extra.extend(zeros+zeros+zeros) # SO SLOW...
+##
+##        def __len__(self):
+##            return len(self.faces)//3
+##
+##        def __iter__(self):
+##            for ti in xrange(len(self)):
+##                yield self[ti]
+##
+##        def __getitem__(self, i):
+##            flati = i * 3
+##            i1,i2,i3 = self.faces[flati:flati+3]
+##            pi1,pi2,pi3 = i1*3,i2*3,i3*3
+##            p1,p2,p3 = self.points[pi1:pi1+3], self.points[pi2:pi2+3], self.points[pi3:pi3+3]
+####            tri = Triangle(Vertex(Position=Vector(*p1)),
+####                           Vertex(Position=Vector(*p2)),
+####                           Vertex(Position=Vector(*p3)))
+##
+####            arr = array.array
+####            zeros = arr('f', [0]*(3+3+4+4))
+####            tri = arr('f', p1+zeros+p2+zeros+p3+zeros)
+####            print len(tri), tri
+##
+##            tri = Triangle(p1, p2, p3)
+##
+##            return tri
+##
+##    class Triangle:
+##        def __init__(self, p1, p2, p3):
+##            arr = array.array
+##            zeros = arr('f', [0]*(3+3+4+4))
+##            self._data = arr('f', p1+zeros+p2+zeros+p3+zeros)
+####            self._data1 = arr('f', p1+zeros)
+####            self._data2 = arr('f', p2+zeros)
+####            self._data3 = arr('f', p3+zeros)
+##
+####    class Vertex:
+####        def __init__(self, Position, Normal=None, Texture=None, Color=None, Output=None):
+####            self.P
+##                    
+##    triangles = Triangles()
+##    for i in range(0, len(flat), 12):
+####        n = Vector(*flat[i:i+3]) #flat[i], flat[i+1], flat[i+2])
+####        v1 = Vector(*flat[i+3:i+6]) #flat[i+3], flat[i+4], flat[i+5])
+####        v2 = Vector(*flat[i+6:i+9]) #flat[i+6], flat[i+7], flat[i+8])
+####        v3 = Vector(*flat[i+9:i+12])
+####        t = Triangle()
+####        t.V1.Position = v1
+####        t.V2.Position = v2
+####        t.V3.Position = v3
+####        #n = t.Normal()
+####        t.V1.Normal = n
+####        t.V2.Normal = n
+####        t.V3.Normal = n
+####        triangles.append(t)
+##        p1 = flat[i+3:i+6]
+##        p2 = flat[i+6:i+9]
+##        p3 = flat[i+9:i+12]
+##        triangles.append(p1, p2, p3)
+##        continue
+##
+##        xmin = min(v1.X, v2.X, v3.X)
+##        xmax = max(v1.X, v2.X, v3.X)
+##        ymin = min(v1.Y, v2.Y, v3.Y)
+##        ymax = max(v1.Y, v2.Y, v3.Y)
+##        zmin = min(v1.Z, v2.Z, v3.Z)
+##        zmax = max(v1.Z, v2.Z, v3.Z)
+##
+##        if i == 0:
+##            _min.X = xmin
+##            _min.Y = ymin
+##            _min.Z = zmin
+##            _max.X = xmax
+##            _max.Y = ymax
+##            _max.Z = zmax
+##        else:
+##            _min.X = min(_min.X, xmin)
+##            _min.Y = min(_min.Y, ymin)
+##            _min.Z = min(_min.Z, zmin)
+##            _max.X = max(_max.X, xmax)
+##            _max.Y = max(_max.Y, ymax)
+##            _max.Z = max(_max.Z, zmax)
+
     # normal approach
     _min = Vector()
     _max = Vector()

@@ -5,24 +5,30 @@ from .vector import Vector, VectorW
 from .color import Color
 from .color import Color as NewColor
 
+from ctypes import Structure
 
 
-class Vertex:
-    def __init__(self,
-                 Position = None, #Vector
-                Normal = None, #Vector
-                Texture = None, #Vector
-                Color = None, #Color
-                Output = None, #VectorW
-                # Vectors  []Vector
-                # Colors   []Color
-                # Floats   []float64
-             ):
-        self.Position = Position or Vector()
-        self.Normal = Normal or Vector()
-        self.Texture = Texture or Vector()
-        self.Color = Color or NewColor() # name conflict
-        self.Output = Output or VectorW()
+class Vertex(Structure):
+    _fields_ = [('Position',Vector),
+                ('Normal',Vector),
+                ('Texture',Vector),
+                ('Color',NewColor),
+                ('Output',VectorW)]
+##    def __init__(self,
+##                 Position = None, #Vector
+##                Normal = None, #Vector
+##                Texture = None, #Vector
+##                Color = None, #Color
+##                Output = None, #VectorW
+##                # Vectors  []Vector
+##                # Colors   []Color
+##                # Floats   []float64
+##             ):
+##        self.Position = Position or Vector()
+##        self.Normal = Normal or Vector()
+##        self.Texture = Texture or Vector()
+##        self.Color = Color or NewColor() # name conflict
+##        self.Output = Output or VectorW()
 
     def __repr__(self):
         return 'Vertex( {} )'.format(self.Position)

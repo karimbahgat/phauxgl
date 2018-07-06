@@ -4,6 +4,8 @@ from __future__ import division
 import math
 import random
 
+from ctypes import Structure, c_float
+
 
 
 def V(x, y, z):
@@ -18,7 +20,10 @@ def RandomUnitVector():
             continue
         return Vector(x, y, z).Normalize()
 
-class Vector:
+class Vector(Structure):
+    _fields_ = [('X',c_float),
+                ('Y',c_float),
+                ('Z',c_float)]
     def __init__(self, x=0, y=0, z=0):
         self.X = x
         self.Y = y
@@ -178,7 +183,11 @@ class Vector:
         return v.Add(w.Sub(v).MulScalar(t)).Distance(p)
 
 
-class VectorW:
+class VectorW(Structure):
+    _fields_ = [('X',c_float),
+                ('Y',c_float),
+                ('Z',c_float),
+                ('W',c_float)]
     def __init__(self, x=0, y=0, z=0, w=0):
         self.X = x
         self.Y = y
