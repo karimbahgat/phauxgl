@@ -6,7 +6,7 @@ import time
 
 from phauxgl.stl import LoadSTL
 from phauxgl.vector import V
-from phauxgl.util import Radians
+from phauxgl.util import Radians, GridMesh, GridTexture
 from phauxgl.context import NewContext
 from phauxgl.matrix import LookAt
 from phauxgl.color import Black, Gray, Color
@@ -22,54 +22,6 @@ fovy   = 30
 near   = 1
 far    = 10
 
-
-def grid2mesh(grid, zscale=1):
-    from phauxgl.triangle import Triangle
-    from phauxgl.vertex import Vertex
-    from phauxgl.vector import Vector
-    
-    w = len(grid[0])
-    h = len(grid)
-    
-    triangles = []
-    for row in range(0, h-1):
-        for col in range(0, w-1):
-            corners = [(col,row),
-                        (col+1,row),
-                        (col+1,row+1),
-                        (col,row+1),
-                        ]
-            
-            t1 = corners[0],corners[1],corners[2]
-            vx = []
-            for c,r in t1:
-                x,y,z = grid[r][c]
-                z *= zscale
-                xf,yf = col/float(w), row/float(h)
-                vx.append( Vertex(Position=Vector(x,y,z), Texture=Vector(xf,yf,0)) )
-            t = Triangle(*vx)
-            n = t.Normal()
-            t.V1.Normal = n
-            t.V2.Normal = n
-            t.V3.Normal = n
-            triangles.append( t )
-                
-            t2 = corners[2],corners[3],corners[0]
-            vx = []
-            for c,r in t2:
-                x,y,z = grid[r][c]
-                z *= zscale
-                xf,yf = col/float(w), row/float(h)
-                vx.append( Vertex(Position=Vector(x,y,z), Texture=Vector(xf,yf,0)) )
-            t = Triangle(*vx)
-            n = t.Normal()
-            t.V1.Normal = n
-            t.V2.Normal = n
-            t.V3.Normal = n
-            triangles.append( t )
-
-    mesh = Mesh(triangles, None, None)
-    return mesh
 
 
 if __name__ == '__main__':
@@ -132,10 +84,10 @@ if __name__ == '__main__':
 ##    del poprast.bands[0].img, poprast
 ##    gc.collect()
 
-    eye    = V(2, 2, 1) # 4, 3
+    eye    = V(2, 2, -1) # 4, 3
     center = V(0, 0, 0)
     up     = V(0, 0, 1)
-    light = V(0.75, 0.25, 1).Normalize()
+    light = V(0.75, 0.25, -1).Normalize()
 
     import math
     grid = []
@@ -175,7 +127,7 @@ if __name__ == '__main__':
 ##        grid.append(grow)
 ##    zscale = 4
 
-    mesh = grid2mesh(grid, zscale=zscale)
+    mesh = GridMesh(grid, zscale=zscale)
     print mesh.BoundingBox()
     print mesh
 
@@ -185,7 +137,7 @@ if __name__ == '__main__':
     mesh.box = mesh.BoundingBox()
 
     # smooth the normals
-    mesh.SmoothNormalsThreshold(Radians(30))
+    #mesh.SmoothNormalsThreshold(Radians(30))
 
     # create a rendering context
     print 'setting up context...'

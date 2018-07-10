@@ -169,6 +169,7 @@ if __name__ == '__main__':
     # create a rendering context
     print 'setting up context...'
     context = NewContext(width*scale, height*scale)
+    context.Cull = 4
     context.ClearColor = Black
     #context.Wireframe = True
     #context.LineWidth = 1

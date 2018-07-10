@@ -6,7 +6,7 @@ import time
 
 from phauxgl.stl import LoadSTL
 from phauxgl.vector import V
-from phauxgl.util import Radians
+from phauxgl.util import Radians, GridMesh, GridTexture
 from phauxgl.context import NewContext
 from phauxgl.matrix import LookAt
 from phauxgl.color import Black, Gray, Color
@@ -24,79 +24,6 @@ fovy   = 30
 near   = 1
 far    = 10
 
-
-def grid2mesh(grid, zscale=1):
-    from phauxgl.triangle import Triangle, Triangles
-    from phauxgl.vertex import Vertex
-    from phauxgl.vector import Vector
-    
-    w = len(grid[0])
-    h = len(grid)
-    
-    triangles = [] #Triangles()
-    for row in range(0, h-1):
-        for col in range(0, w-1):
-            corners = [(col,row),
-                        (col+1,row),
-                        (col+1,row+1),
-                        (col,row+1),
-                        ]
-            
-            t1 = corners[0],corners[1],corners[2]
-            vx = []
-            for c,r in t1:
-                x,y,z = grid[r][c]
-                z *= zscale
-                xf,yf = col/float(w), row/float(h)
-                vx.append( Vertex(Position=Vector(x,y,z), Texture=Vector(xf,yf,0)) )
-            t = Triangle(*vx)
-            n = t.Normal()
-            t.V1.Normal = n
-            t.V2.Normal = n
-            t.V3.Normal = n
-            triangles.append( t )
-                
-            t2 = corners[2],corners[3],corners[0]
-            vx = []
-            for c,r in t2:
-                x,y,z = grid[r][c]
-                z *= zscale
-                xf,yf = col/float(w), row/float(h)
-                vx.append( Vertex(Position=Vector(x,y,z), Texture=Vector(xf,yf,0)) )
-            t = Triangle(*vx)
-            n = t.Normal()
-            t.V1.Normal = n
-            t.V2.Normal = n
-            t.V3.Normal = n
-            triangles.append( t )
-
-    mesh = Mesh(triangles, None, None)
-    return mesh
-
-
-def grid2texture(grid, gradient, zmin=None, zmax=None):
-    import math
-    im = Image(len(grid[0]),len(grid))
-    zmin = min((tup[2] for row in grid for tup in row)) if zmin is None else zmin
-    zmax = max((tup[2] for row in grid for tup in row)) if zmax is None else zmax
-    colors = gradient
-    for y,row in enumerate(grid):
-        for x,(_,_,z) in enumerate(row):
-            #print x,y,map(int,(155*z, 0, 155-155*z, 155))
-            zfac = (z-zmin) / float(zmax-zmin)
-            zfac = 0 if zfac < 0 else zfac
-            zfac = 1 if zfac > 1 else zfac
-            #px[x,y] = tuple(map(int,(255*zfac, 0, 255-255*zfac, 255)))
-            colidx = (len(colors)-1)*zfac
-            #print zfac,colidx
-            bwfac = colidx - int(colidx)
-            #print bwfac
-            c1,c2 = colors[int(math.floor(colidx))], colors[int(math.ceil(colidx))]
-            #print c1.Lerp(c2, bwfac).NRGBA()
-            im[x,len(grid)-y-1] = c1.Lerp(c2, bwfac).NRGBA()
-    #im.show()
-    texture = NewImageTexture(im)
-    return texture
 
 
 if __name__ == '__main__':
@@ -146,11 +73,11 @@ if __name__ == '__main__':
     del poprast.bands[0].img, poprast
     gc.collect()
 
-    mesh = grid2mesh(grid, zscale=zscale)
+    mesh = GridMesh(grid, zscale=zscale)
     print mesh.BoundingBox()
     print mesh
 
-    texture = grid2texture(grid,
+    texture = GridTexture(grid,
                            gradient=[Color(0,0,1,1), # blue
                                      Color(0,0.7,0,1), # green
                                      Color(0.2,0.8,0,1), # green

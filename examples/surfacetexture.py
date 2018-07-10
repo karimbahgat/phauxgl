@@ -155,7 +155,7 @@ if __name__ == '__main__':
     mesh.box = mesh.BoundingBox()
 
     # smooth the normals
-    mesh.SmoothNormalsThreshold(Radians(30))
+    #mesh.SmoothNormalsThreshold(Radians(30))
 
     # create a rendering context
     print 'setting up context...'

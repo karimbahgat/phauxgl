@@ -166,7 +166,7 @@ def NewContext(width, height):
     dc.AlphaBlend = True
     dc.Wireframe = False
     dc.FrontFace = FaceCCW
-    dc.Cull = CullNone
+    dc.Cull = CullBack
     dc.LineWidth = 2
     dc.DepthBias = 0
     dc.screenMatrix = Screen(width, height)
@@ -189,7 +189,7 @@ class Context:
                 AlphaBlend=None, #bool
                 Wireframe=None, #bool
                 FrontFace=None, 
-                Cull=CullNone,
+                Cull=CullBack,
                 LineWidth=None,
                 DepthBias=None,
                 screenMatrix=None,

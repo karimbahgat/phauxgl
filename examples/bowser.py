@@ -46,6 +46,7 @@ if __name__ == '__main__':
     print 'setting up context...'
     context = NewContext(width*scale, height*scale)
     context.ClearColorBufferWith(Black)
+    context.Cull = 4
     #context.Wireframe = True
     #context.LineWidth = 1
 
