@@ -99,6 +99,10 @@ class Mesh:
             t.V2.Normal = lookup[t.V2.Position]
             t.V3.Normal = lookup[t.V3.Position]
 
+    def FixNormals(m):
+        for t in m.Triangles:
+            t.FixNormals()
+
     def UnitCube(m):
         r = 0.5
         return m.FitInside(Box(Vector(-r, -r, -r), Vector(r, r, r)), Vector(0.5, 0.5, 0.5))

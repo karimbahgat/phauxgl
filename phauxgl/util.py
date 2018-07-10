@@ -1,8 +1,13 @@
 
 from __future__ import division
 
+from .vector import Vector
+
 import math
 import os
+
+# TODO: Find a way to ensure grid tools use correct face winding orientation,
+# based on axes directions.
 
 def Radians(degrees):
     return degrees * math.pi / 180.0

@@ -241,12 +241,13 @@ class Triangle(Structure):
 
     def FixNormals(t):
         n = t.Normal()
-        zero = Vector()
-        if t.V1.Normal == zero:
+        def isnull(v):
+            return v.X == 0 and v.Y == 0 and v.Z == 0
+        if isnull(t.V1.Normal):
             t.V1.Normal = n
-        if t.V2.Normal == zero:
+        if isnull(t.V2.Normal):
             t.V2.Normal = n
-        if t.V3.Normal == zero:
+        if isnull(t.V3.Normal):
             t.V3.Normal = n
 
     def BoundingBox(t):
