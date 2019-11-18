@@ -90,7 +90,7 @@ if __name__ == "__main__":
     #mesh = stl.LoadSTL(r"C:\Users\kimok\OneDrive\Documents\GitHub\phauxgl\examples\bowser.stl")
     mesh = mesh.Mesh(triobjs, None, None)
     mesh.BiUnitCube()
-    mesh.SmoothNormals()
+    #mesh.SmoothNormals()
 
     cx = context
     context = cx.NewContext(width*scale, height*scale)
